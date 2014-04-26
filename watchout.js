@@ -67,6 +67,66 @@ var drag = d3.behavior.drag()
     .on("drag", dragmove);
 
 
+var tweenWithCollisionDetection = function(endData) {
+  var enemy = d3.select(this);
+  var player = d3.select(".player");
+  var xDiff = parseFloat(enemy.attr("cx")) - player.x;
+  var yDiff = parseFloat(enemy.attr("cy")) - player.y;
+  var separation = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+  var radiusSum = enemy.attr("r") + player.r;
+  if (separation < radiusSum) {
+    return console.log("FML");
+  }
+};
+
+// var checkCollision = function(enemy, collidedCallback) {
+
+//   return _(players).each(function(player) {
+//     var radiusSum, separation, xDiff, yDiff;
+//     radiusSum = parseFloat(enemy.attr('r')) + player.r;
+//     xDiff = parseFloat(enemy.attr('cx')) - player.x;
+//     yDiff = parseFloat(enemy.attr('cy')) - player.y;
+//     separation = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+//     if (separation < radiusSum) return collidedCallback(player, enemy);
+
+//   });
+// };
+
+
+// var tweenWithCollisionDetection = function(endData) {
+//   var endPos, enemy, startPos;
+//   enemy = d3.select(this);
+//   startPos = {
+//     x: parseFloat(enemy.attr('cx')),
+//     y: parseFloat(enemy.attr('cy'))
+//   };
+//   endPos = {
+//     x: axes.x(endData.x),
+//     y: axes.y(endData.y)
+//   };
+
+
+//   return function(t) {
+//     var enemyNextPos;
+//     checkCollision(enemy, onCollision);
+//     enemyNextPos = {
+//       x: startPos.x + (endPos.x - startPos.x) * t,
+//       y: startPos.y + (endPos.y - startPos.y) * t
+//     };
+//     return enemy.attr('cx', enemyNextPos.x).attr('cy', enemyNextPos.y);
+//   };
+// };
+
+
+
+
+// var onCollision = function() {
+//   console.log("A collision!");
+// };
+
+
+
+
 var updatePlayer = function (data){
 
   var player = gameBoard.selectAll("path")
@@ -99,7 +159,8 @@ var updateEnemies = function (data) {
   enemies.transition()
       .duration(1000)
       .attr("cx", function(d, i) { return axes.x(d.x); })
-      .attr("cy", function(d, i) { return axes.y(d.y); });
+      .attr("cy", function(d, i) { return axes.y(d.y); })
+      .tween('custom', tweenWithCollisionDetection);
 
 
   // ENTER
@@ -110,7 +171,8 @@ var updateEnemies = function (data) {
       .attr("cy", function(d, i) { return axes.y(d.y); })
       .attr("r", 10)
       .transition()
-      .duration(1000);
+      .duration(1000)
+      .tween('custom', tweenWithCollisionDetection);
 
   // ENTER + UPDATE
   // Appending to the enter selection expands the update selection to include
