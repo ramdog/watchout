@@ -46,7 +46,11 @@ var updateEnemies = function (data) {
 
   // UPDATE
   // Update old elements as needed.
-  // text.attr("class", "update");
+  enemies.transition()
+      .duration(750)
+      .attr("cx", function(d, i) { return axes.x(d.x); })
+      .attr("cy", function(d, i) { return axes.y(d.y); })
+
 
   // ENTER
   // Create new elements as needed.
@@ -54,7 +58,9 @@ var updateEnemies = function (data) {
       .attr("class", "enemy")
       .attr("cx", function(d, i) { return axes.x(d.x); })
       .attr("cy", function(d, i) { return axes.y(d.y); })
-      .attr("r", 10);
+      .attr("r", 10)
+      .transition()
+      .duration(750);
 
   // ENTER + UPDATE
   // Appending to the enter selection expands the update selection to include
@@ -71,8 +77,6 @@ var updateEnemies = function (data) {
 updateEnemies(enemies);
 
 // Grab a random sample of letters from the alphabet, in alphabetical order.
-// setInterval(function() {
-//   update(shuffle(alphabet)
-//       .slice(0, Math.floor(Math.random() * 26))
-//       .sort());
-// }, 1500);
+setInterval(function() {
+  updateEnemies(createEnemies());
+}, 1000);
