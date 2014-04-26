@@ -10,7 +10,8 @@ var gameOptions = {
 
 var gameStats = {
   score: 0,
-  bestScore: 0
+  bestScore: 0,
+  collisions: 0
 };
 
 var gameBoard = d3.select("body").append("svg")
@@ -77,6 +78,8 @@ var checkCollision = function () {
 
   // console.log(playerX + ", " + playerY);
 
+  var collided = false;
+
   enemies.each(function(d, i){
       var enemy = d3.select(this);
       var enemyX = enemy.attr("cx");
@@ -84,15 +87,24 @@ var checkCollision = function () {
       var proximityDistance = Math.sqrt(Math.pow((playerX - enemyX), 2) + Math.pow((playerY - enemyY), 2));
       // if (proximityDistance < (player.r + d.r)) {
       if (proximityDistance < parseFloat(enemy.attr("r")) + player.r) {
-        // console.log(parseFloat(enemy.attr("r")) + player.r);
-      }
-
-      if (i === 0) {
-        enemy.attr("class", "enemy2");
-        // console.log("enemy0: " + enemyX + ", and " + enemyY);
+        collided = true;
       }
     }
   );
+
+  if (collided) {
+    if (gameStats.score > gameStats.bestScore) {
+      gameStats.bestScore = gameStats.score;
+      d3.selectAll("#spanHigh").text(gameStats.bestScore);
+    }
+    gameStats.collisions++;
+    d3.selectAll("#spanCollisions").text(gameStats.collisions);
+    gameStats.score = 0;
+  } else {
+    gameStats.score++;
+    d3.selectAll("#spanCurrent").text(gameStats.score);
+  }
+
 };
 
 setInterval(function() {
