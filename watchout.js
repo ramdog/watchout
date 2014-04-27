@@ -141,25 +141,25 @@ var updateEnemies = function (data) {
   // DATA JOIN
   // Join new data with old elements, if any.
   var enemies = gameBoard.selectAll("circle")
-      .data(data, function(d){ return d.id; });
+    .data(data, function(d){ return d.id; });
 
   // UPDATE
   // Update old elements as needed.
   enemies.transition()
-      .duration(1000)
-      .attr("cx", function(d, i) { return axes.x(d.x); })
-      .attr("cy", function(d, i) { return axes.y(d.y); });
+    .duration(1500)
+    .attr("cx", function(d, i) { return axes.x(d.x); })
+    .attr("cy", function(d, i) { return axes.y(d.y); });
 
 
   // ENTER
   // Create new elements as needed.
   enemies.enter().append("svg:circle")
-      .attr("class", "enemy")
-      .attr("cx", function(d, i) { return axes.x(d.x); })
-      .attr("cy", function(d, i) { return axes.y(d.y); })
-      .attr("r", 10)
-      .transition()
-      .duration(1000);
+    .attr("cx", function(d, i) { return axes.x(d.x); })
+    .attr("cy", function(d, i) { return axes.y(d.y); })
+    .attr("r", 10)
+    .attr("fill", "url(#image)")
+    .transition()
+    .duration(2000);
 
 };
 
