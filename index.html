@@ -2,16 +2,20 @@
 <html>
   <head>
     <link rel='stylesheet' href='styles.css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <div class="scoreboard">
-      <h1>Collider</h1>
-      <h3>Don't get hit!</h3>
-      <h3><a href="docs/collider.html">Read the source code/docs</a></h3>
+      <div id="titleDiv">
+        <h1>COLLIDER</h1>
+        <h3>Don't get hit!</h3>
+      </div>
 
-      <div class="high">High score: <span id="spanHigh">0</span></div>
-      <div class="current">Current score: <span id="spanCurrent">0</span></div>
-      <div class="collisions">Collisions: <span id="spanCollisions">0</span></div>
+      <div id="scoreDiv">
+        <div class="high">High score: <span id="spanHigh">0</span></div>
+        <div class="current">Current score: <span id="spanCurrent">0</span></div>
+        <div class="collisions">Collisions: <span id="spanCollisions">0</span></div>
+      </div>
     </div>
     <script src="d3.js" charset="utf-8"></script>
     <script src="watchout.js"></script>

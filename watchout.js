@@ -7,14 +7,13 @@ var gameOptions = {
   padding: 20
 };
 
-
 var gameStats = {
   score: 0,
   bestScore: 0,
   collisions: 0
 };
 
-var gameBoard = d3.select("body").append("svg")
+var gameBoard = d3.select(".scoreboard").append("svg")
     .attr("width", gameOptions.width)
     .attr("height", gameOptions.height);
 
@@ -70,13 +69,13 @@ var dragmove = function () {
 var drag = d3.behavior.drag()
     .on("drag", dragmove);
 
+var previousCollided = false;
+
 var checkCollision = function () {
   var enemies = gameBoard.selectAll("circle");
 
   var playerX = player.x;
   var playerY = player.y;
-
-  // console.log(playerX + ", " + playerY);
 
   var collided = false;
 
@@ -85,7 +84,6 @@ var checkCollision = function () {
       var enemyX = enemy.attr("cx");
       var enemyY = enemy.attr("cy");
       var proximityDistance = Math.sqrt(Math.pow((playerX - enemyX), 2) + Math.pow((playerY - enemyY), 2));
-      // if (proximityDistance < (player.r + d.r)) {
       if (proximityDistance < parseFloat(enemy.attr("r")) + player.r) {
         collided = true;
       }
@@ -97,20 +95,27 @@ var checkCollision = function () {
       gameStats.bestScore = gameStats.score;
       d3.selectAll("#spanHigh").text(gameStats.bestScore);
     }
-    gameStats.collisions++;
-    d3.selectAll("#spanCollisions").text(gameStats.collisions);
+    if(!previousCollided) {
+      gameStats.collisions++;
+      d3.selectAll("#spanCollisions").text(gameStats.collisions);
+    }
     gameStats.score = 0;
   } else {
     gameStats.score++;
+    if (gameStats.bestScore < gameStats.score) {
+      gameStats.bestScore++;
+      d3.selectAll("#spanHigh").text(gameStats.bestScore);
+    }
     d3.selectAll("#spanCurrent").text(gameStats.score);
   }
+
+  previousCollided = collided;
 
 };
 
 setInterval(function() {
   checkCollision();
 }, 10);
-
 
 var updatePlayer = function (data){
 
@@ -124,7 +129,6 @@ var updatePlayer = function (data){
     .attr("transform", function(d){
       var rotate = "rotate(0," + d.x + "," + d.y + ") ";
       var translate = "translate(" + d.x + "," + d.y + ")";
-
       return rotate + translate;
     })
     .style("cursor", "pointer")
@@ -145,7 +149,6 @@ var updateEnemies = function (data) {
       .duration(1000)
       .attr("cx", function(d, i) { return axes.x(d.x); })
       .attr("cy", function(d, i) { return axes.y(d.y); });
-      // .tween('custom', tweenWithCollisionDetection);
 
 
   // ENTER
@@ -157,17 +160,7 @@ var updateEnemies = function (data) {
       .attr("r", 10)
       .transition()
       .duration(1000);
-      // .tween('custom', tweenWithCollisionDetection);
 
-  // ENTER + UPDATE
-  // Appending to the enter selection expands the update selection to include
-  // entering elements; so, operations on the update selection after appending to
-  // the enter selection will apply to both entering and updating nodes.
-  // text.text(function(d) { return d; });
-
-  // EXIT
-  // Remove old elements as needed.
-  // text.exit().remove();
 };
 
 updatePlayer([player]);
@@ -178,66 +171,5 @@ updateEnemies(enemies);
 // Grab a random sample of letters from the alphabet, in alphabetical order.
 setInterval(function() {
   updateEnemies(createEnemies());
-}, 1000);
-
-
-
-
-
-// var tweenWithCollisionDetection = function(endData) {
-//   var enemy = d3.select(this);
-//   var player = d3.select(".player");
-//   var xDiff = parseFloat(enemy.attr("cx")) - player.x;
-//   var yDiff = parseFloat(enemy.attr("cy")) - player.y;
-//   var separation = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-//   var radiusSum = enemy.attr("r") + player.r;
-//   if (separation < radiusSum) {
-//     return console.log("FML");
-//   }
-// };
-
-// var checkCollision = function(enemy, collidedCallback) {
-
-//   return _(players).each(function(player) {
-//     var radiusSum, separation, xDiff, yDiff;
-//     radiusSum = parseFloat(enemy.attr('r')) + player.r;
-//     xDiff = parseFloat(enemy.attr('cx')) - player.x;
-//     yDiff = parseFloat(enemy.attr('cy')) - player.y;
-//     separation = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-//     if (separation < radiusSum) return collidedCallback(player, enemy);
-
-//   });
-// };
-
-
-// var tweenWithCollisionDetection = function(endData) {
-//   var endPos, enemy, startPos;
-//   enemy = d3.select(this);
-//   startPos = {
-//     x: parseFloat(enemy.attr('cx')),
-//     y: parseFloat(enemy.attr('cy'))
-//   };
-//   endPos = {
-//     x: axes.x(endData.x),
-//     y: axes.y(endData.y)
-//   };
-
-
-//   return function(t) {
-//     var enemyNextPos;
-//     checkCollision(enemy, onCollision);
-//     enemyNextPos = {
-//       x: startPos.x + (endPos.x - startPos.x) * t,
-//       y: startPos.y + (endPos.y - startPos.y) * t
-//     };
-//     return enemy.attr('cx', enemyNextPos.x).attr('cy', enemyNextPos.y);
-//   };
-// };
-
-
-
-
-// var onCollision = function() {
-//   console.log("A collision!");
-// };
+}, 2000);
 
